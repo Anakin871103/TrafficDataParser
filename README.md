@@ -3,3 +3,8 @@ This is the package "Traffic Data Parser". It aims to provide a handy toolbox fo
 
 I am still working on writing the details of this package. 
 See you later.
+
+
+## How to install
+
+pip install git+https://github.com/HsuanChih-Wang/TrafficDataParser.git
