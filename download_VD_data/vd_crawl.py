@@ -14,9 +14,11 @@ import gzip
 import dateutil.relativedelta
 import shutil
 
+### 20230302 初步完成 但還沒做檔案下載驗證
+
 #起始日和最終日(總抓取天數為最終日-起始日+1)
-first_day = '2021-01-05'
-last_day = '2021-01-05'
+FIRST_DATE = '2021-01-05'
+LAST_DATE = '2021-01-05'
 
 # 儲存VD資料的位置
 PATH_DATABASE = {1: 'C:/VD_1分鐘資料', 5: 'C:/VD_5分鐘資料'}
@@ -66,7 +68,7 @@ def decompress(path_save_compress,download_first):
         g_file.close()
 
 # 下載資料
-def download_data(path1, path2, start_day):
+def download_vd_data(path1, path2, start_day):
     VD_DATA_COLNAME = ['version', 'listname', 'updatetime', 'interval', 'vdid', 'status', 'datacollecttime', 'vsrdir', 'vsrid',
          'speed', 'laneoccupy', 'carid', 'volume']
 
@@ -196,6 +198,9 @@ def download_data(path1, path2, start_day):
 
 if __name__ == "__main__":
 
+    # for calculate running time
+    start = time.time()
+
     def ask_input_vdFreq() -> int:
         # 要求使用者輸入欲下載VD資料時間頻率(1分鐘或5分鐘)
         while True:
@@ -206,30 +211,30 @@ if __name__ == "__main__":
                 break
         return vd_dataFrequency
 
-    def download_data(firstDay, lastDay):
+    def download_data(firstDay: datetime.datetime, lastDay:datetime.datetime):
 
-        def create_directories():
+        def create_directories(path_download_dict, path_download):
             print(f"Start creating necessary directories.... 開始建立下載VD資料所需資料夾... ")
             # 創每個月的資料夾
             # exist_ok: for value True leaves directory unaltered
-            create_dict_forMonth(PATH_DATABASE[vd_dataFrequency], first_day, last_day)
+            create_dict_forMonth(PATH_DATABASE[vd_dataFrequency], firstDay, lastDay)
 
             # 創桌面下載資料夾
-            work = os.getcwd()
-            path_download_dict = os.path.join(work, 'download_vd')
             os.makedirs(path_download_dict, exist_ok=True)
-            path_download = os.path.join(path_download_dict, str(first_day.year))
             os.makedirs(path_download, exist_ok=True)
 
             print("Creating directories done! 資料夾建立成功!")
             return 0
 
         #建立資料夾
-        create_directories()
+        work = os.getcwd()
+        path_download_dict = os.path.join(work, 'download_vd')
+        path_download = os.path.join(path_download_dict, str(firstDay.year))
+        create_directories(path_download_dict, path_download)
 
         # 下載資料
         while firstDay < lastDay:
-            download_data(PATH_DATABASE[vd_dataFrequency], path_download, firstDay)
+            download_vd_data(path1=PATH_DATABASE[vd_dataFrequency], path2=path_download, start_day=firstDay)
             firstDay = firstDay + datetime.timedelta(days=1)
 
         # 刪除下載資料夾
@@ -239,15 +244,15 @@ if __name__ == "__main__":
 
         return 0
 
-    #for calculate running time
-    start = time.time()
-
-    first_day = datetime.datetime.strptime(first_day, '%Y-%m-%d')
-    last_day = datetime.datetime.strptime(last_day, '%Y-%m-%d') + datetime.timedelta(days=1)
-
+    #Ask users to input the data frequency
     vd_dataFrequency = ask_input_vdFreq()
+
+    firstDay = datetime.datetime.strptime(FIRST_DATE, '%Y-%m-%d')
+    lastDay = datetime.datetime.strptime(LAST_DATE, '%Y-%m-%d') + datetime.timedelta(days=1)
     download_data(firstDay, lastDay)
 
+    #Calculate the running time of the program
     calculate_running_time(start=start)
+
     print("All Tasks Done! 所有工作已完成!")
 
