@@ -9,25 +9,32 @@ import requests as request
 import tarfile
 import datetime
 import pandas as pd
+# import winsound
+# frequency = 2500  # Set Frequency To 2500 Hertz
+# duration = 1000  # Set Duration To 1000 ms == 1 second
+# winsound.Beep(frequency, duration)
+
 
 COLUMN_NAMES = {'M03A': ['TimeInterval', 'GantryID', 'Direction', 'VehicleType', 'Volume'],
                'M05A': ['TimeInterval', 'GantryFrom', 'GantryTo', 'VehicleType', 'SpaceMeanSpeed', 'Volume'],
                'M06A': ['VehicleType', 'DetectionTime_O', 'GantryID_O', 'DetectionTime_D', 'GantryID_D', 'TripLength', 'TripEnd', 'TripInformation'],
                'M08A': ['TimeInterval', 'GantryFrom', 'GantryTo', 'VehicleType', 'Volume']}
 
-BASE_PATH = 'D:/freewayData/ETC_2021/'
+BASE_PATH = 'D:/freewayData/'
+DOWNLOAD_PATH = "D:/freewayData/ETC_2022/download"
 
 def change_directory(path: str):
     os.chdir(path)
 
 def download_data():
 
+    year = str(input("year = ?"))
     firstDate = input("firstDate = MMDD")
     lastDate = input("lastDate = MMDD")
     dataType = input('type = ? (EX. M06)') + 'A'
 
-    first_date = '2021' + firstDate + '0000'
-    last_date = '2021' + lastDate + '2355'
+    first_date = year + firstDate + '0000'
+    last_date = year + lastDate + '2355'
 
     start = datetime.datetime.strptime(first_date, '%Y%m%d%H%M')
     end = datetime.datetime.strptime(last_date, '%Y%m%d%H%M')
@@ -45,10 +52,9 @@ def download_data():
         html = request.get(url)
 
         if html.status_code == 200:
-            #downloadPath = "C:/Users/user/ETC/"
-            downloadPath = "C:/Users/WangRabbit/Documents/GitHub/ETC_FreewayAccidentAnalysis/data/Reference-Data/"
+
             # 切換目標資料夾: 從當前資料夾至預備儲存資料的資料夾
-            os.chdir(downloadPath)
+            os.chdir(DOWNLOAD_PATH)
             # 確認month的資料夾是否存在
             if not os.path.exists(month):
                 os.makedirs(month) #新增month
@@ -115,7 +121,8 @@ def combine_data():
             second = '00'
 
             # 到M0X資料夾
-            change_directory(path=BASE_PATH + month + '/' + dataType + '/' + year + month + day + '/' + hour)
+            change_directory(path=f"{DOWNLOAD_PATH}/{month}/{dataType}/{year}{month}{day}/{hour}")
+            #change_directory(path=BASE_PATH + month + '/' + dataType + '/' + year + month + day + '/' + hour)
 
             fileName = 'TDCS_' + dataType + '_' + year + month + day + '_' + hour + min + second
 
@@ -134,7 +141,9 @@ def combine_data():
 
             startTime = startTime + datetime.timedelta(minutes=5)
 
-        change_directory(path=BASE_PATH + '/afterCombination/' + dataType + '/2021年/' + str(int(month)) + '月/')
+
+        change_directory(path=f"{BASE_PATH}/afterCombination/{dataType}/{year}年/{str(int(month))}月/")
+        #change_directory(path=BASE_PATH + '/afterCombination/' + dataType + '/2021年/' + str(int(month)) + '月/')
 
         # 將dfAppend轉成csv
         dfAppend.to_csv(day + '日.csv')
