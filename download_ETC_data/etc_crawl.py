@@ -9,10 +9,9 @@ import requests as request
 import tarfile
 import datetime
 import pandas as pd
-# import winsound
-# frequency = 2500  # Set Frequency To 2500 Hertz
-# duration = 1000  # Set Duration To 1000 ms == 1 second
-# winsound.Beep(frequency, duration)
+import winsound
+SOUND_FREQ = 2500  # Set Frequency To 2500 Hertz
+SOUND_DURATION = 1000  # Set Duration To 1000 ms == 1 second
 
 
 COLUMN_NAMES = {'M03A': ['TimeInterval', 'GantryID', 'Direction', 'VehicleType', 'Volume'],
@@ -20,18 +19,21 @@ COLUMN_NAMES = {'M03A': ['TimeInterval', 'GantryID', 'Direction', 'VehicleType',
                'M06A': ['VehicleType', 'DetectionTime_O', 'GantryID_O', 'DetectionTime_D', 'GantryID_D', 'TripLength', 'TripEnd', 'TripInformation'],
                'M08A': ['TimeInterval', 'GantryFrom', 'GantryTo', 'VehicleType', 'Volume']}
 
-BASE_PATH = 'D:/freewayData/'
+ETC_DATATYPE_LIST = ['M03A', 'M04A', 'M05A', 'M06A', 'M07A', 'M08A']
+
 DOWNLOAD_PATH = "D:/freewayData/ETC_2022/download"
+COMBINATION_PATH = "D:/freewayData/ETC_2022/combination"
+ETC_DATA_TIMESTEP = 5  # ETC資料產出時階，目前都是5分鐘一筆
 
 def change_directory(path: str):
+    #If the target path (directories) does not exist, will create one and inform users.
+    #Otherwise, will move into the the target path.
+    if not os.path.exists(path):
+        print(f"Path {path} does not exist!")
+        os.makedirs(path)
     os.chdir(path)
 
-def download_data():
-
-    year = str(input("year = ?"))
-    firstDate = input("firstDate = MMDD")
-    lastDate = input("lastDate = MMDD")
-    dataType = input('type = ? (EX. M06)') + 'A'
+def download_data(year:str, firstDate:str, lastDate:str, dataType:str):
 
     first_date = year + firstDate + '0000'
     last_date = year + lastDate + '2355'
@@ -85,31 +87,23 @@ def download_data():
         start = start + datetime.timedelta(days=1)
 
 
-def combine_data():
+def combine_data(firstDate: str, lastDate:str, dataType: str):
 
-    dataType = input('type = ? (ex. M06)') + 'A'
-    #default 20210101~20211231
-    first_date = input('FirstDate YYYY-MMDD-HHMM: ') #'2021-0101-0000'
-    last_date = input('EndDate YYYY-MMDD-HHMM: ') #'2021-0131-2355'
-    
-    change_directory(path=BASE_PATH)
 
-    start = datetime.datetime.strptime(first_date, '%Y-%m%d-%H%M')
-    end = datetime.datetime.strptime(last_date, '%Y-%m%d-%H%M')
+    start = datetime.datetime.strptime(firstDate, '%Y-%m%d')
+    end = datetime.datetime.strptime(lastDate, '%Y-%m%d')
 
-    while start <= end: #day level
+    while start <= end: #Level: day 跑每天的loop迴圈
 
-        #建立一個dataframe結構
+        #依照不同的ETC資料格式，建立一個dataframe結構
         dfAppend = pd.DataFrame(columns=COLUMN_NAMES[dataType])
 
         year = datetime.datetime.strftime(start, "%Y")
         month = datetime.datetime.strftime(start, "%m")
         day = datetime.datetime.strftime(start, "%d")
 
-        startHour = '00'
-        startMin = '00'
-        endHour = '23'
-        endMin = '55'
+        #每天的起始時間與終止時間
+        startHour, startMin, endHour, endMin = '00', '00', '23', '55'
 
         startTime = datetime.datetime.strptime(startHour + startMin, '%H%M')
         endTime = datetime.datetime.strptime(endHour + endMin, '%H%M')
@@ -122,14 +116,12 @@ def combine_data():
 
             # 到M0X資料夾
             change_directory(path=f"{DOWNLOAD_PATH}/{month}/{dataType}/{year}{month}{day}/{hour}")
-            #change_directory(path=BASE_PATH + month + '/' + dataType + '/' + year + month + day + '/' + hour)
-
-            fileName = 'TDCS_' + dataType + '_' + year + month + day + '_' + hour + min + second
+            fileName = f"TDCS_{dataType}_{year}{month}{day}_{hour}{min}{second}"
 
             try:
                 dfTemp = pd.read_csv(fileName + ".csv") #讀取csv
                 dfTemp.columns = COLUMN_NAMES[dataType] #存取欄位名稱
-                dfAppend = dfAppend.append(dfTemp, ignore_index=True) #append
+                dfAppend = dfAppend.append(dfTemp, ignore_index=True) #把資料新增進去
                 print(f"Combined {dataType} -> {year}-{month}-{day}-{hour}-{min}-{second} successfully!")
             except pd.errors.EmptyDataError as e1:
                 #例外處理: 內容為空
@@ -137,19 +129,25 @@ def combine_data():
             except FileNotFoundError as e2:
                 #例外處理: 找不到檔案
                 print(f"Ignore {dataType} -> {year}-{month}-{day}-{hour}-{min}-{second} since file is not found!")
+            except KeyboardInterrupt:
+                print("KeyboardInterrupt")
+            except:
+                #其他例外事件: 直接丟出來
+                print("Exceptions that are not handled in this program occurs : ")
+                winsound.Beep(SOUND_FREQ, SOUND_DURATION)
+                raise
 
 
-            startTime = startTime + datetime.timedelta(minutes=5)
+            startTime = startTime + datetime.timedelta(minutes=ETC_DATA_TIMESTEP) #切換到下一個資料時階
 
 
-        change_directory(path=f"{BASE_PATH}/afterCombination/{dataType}/{year}年/{str(int(month))}月/")
-        #change_directory(path=BASE_PATH + '/afterCombination/' + dataType + '/2021年/' + str(int(month)) + '月/')
+        change_directory(path=f"{COMBINATION_PATH}/{dataType}/{year}年/{str(int(month))}月/")
 
         # 將dfAppend轉成csv
         dfAppend.to_csv(day + '日.csv')
         print(f"Create {day + '日.csv'} successfully!")
 
-        start = start + datetime.timedelta(days=1)
+        start = start + datetime.timedelta(days=1)  # switch to the next day
 
     print("COMBINATION TASKS DONE!")
 
@@ -160,14 +158,31 @@ if __name__ == "__main__":
         mode = input("Mode 1 = Download Data / Mode 2 = Combine Data. Please Enter Mode: ")
         if mode == '1':
             print("Download Data!")
-            download_data()
-            break
         elif mode == '2':
             print("Combine Data!")
-            combine_data()
-            break
         else:
             print(f"Unkown Mode = {mode} Only accept 1 or 2")
+            continue
+
+        while True:
+            dataType = 'M' + input('type = ? (EX. 06)') + 'A'
+            if dataType in ['M03A', 'M04A', 'M05A', 'M06A', 'M07A', 'M08A']:
+                break
+            else:
+                print(f"Unkown dataType = {dataType} Only accept {ETC_DATATYPE_LIST}")
+
+        if mode == '1':
+            year = str(input("year = ?"))
+            firstDate = input("firstDate = MMDD")
+            lastDate = input("lastDate = MMDD")
+            download_data(year, firstDate, lastDate, dataType)
+        elif mode == '2':
+            firstDate = input('FirstDate YYYY-MMDD: ')  # '2021-0101'
+            lastDate = input('EndDate YYYY-MMDD: ')  # '2021-0131'
+            combine_data(firstDate, lastDate, dataType)
+
+        break
+
 
 #End
 print("ALL TASKS DONE")

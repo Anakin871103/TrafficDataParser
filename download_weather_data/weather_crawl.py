@@ -20,7 +20,7 @@ countyNameList = []
 
 # os.chdir('C://python')
 with open('測站網址(1).csv', newline='', encoding='utf-8') as csvfile:
-    SKIPROWS = 700  #跳到指定的ROW: 選擇從哪一個測站開始下載
+    SKIPROWS = 0  #跳到指定的ROW: 選擇從哪一個測站開始下載
     rows = csv.reader(csvfile, skipinitialspace=True)
     #跳到指定的ROW
     for i in range(SKIPROWS):
