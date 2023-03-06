@@ -1,5 +1,5 @@
 
-import module.CSVParser as CSVParser
+import CSVParser
 from datetime import datetime
 import pandas as pd
 
