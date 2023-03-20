@@ -114,8 +114,9 @@ def download_vd_data(path1, path2, start_day):
             except ET.ParseError as e:
                 if e.code == 3:
                     print("XML檔案內容為空! 無法讀取")
-                    logging.basicConfig(filename="log.txt", level=logging.WARNING)
+                    logging.basicConfig(filename="log.txt", level=logging.WARNING, format = "%(asctime)s %(message)s")
                     logging.debug(f"{download_first} XML檔案內容為空! 無法讀取")
+
 
                 print(f"VD file has problem! Now delete it!")
                 # 刪除壓縮檔
@@ -125,7 +126,7 @@ def download_vd_data(path1, path2, start_day):
                 if os.path.exists(path_read_xml):
                     os.remove(path_read_xml)
 
-                raise e
+                # raise e
 
             # 讀XML檔成功
             if check_decompress == 1:
