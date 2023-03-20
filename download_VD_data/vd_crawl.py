@@ -18,11 +18,11 @@ import logging
 ### 20230302 初步完成 但還沒做檔案下載驗證
 
 #起始日和最終日(總抓取天數為最終日-起始日+1)
-FIRST_DATE = '2022-05-01'
-LAST_DATE = '2022-05-01'
+FIRST_DATE = '2022-02-03'
+LAST_DATE = '2022-12-31'
 
 # 儲存VD資料的位置
-PATH_DATABASE = {1: 'D:/VD_1分鐘資料', 5: 'D:/VD_5分鐘資料'}
+PATH_DATABASE = {1: 'E:/VD_1分鐘資料', 5: 'E:/VD_5分鐘資料'}
 # VD檔案名稱(prefix)
 VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
 
@@ -115,7 +115,7 @@ def download_vd_data(path1, path2, start_day):
                 if e.code == 3:
                     print("XML檔案內容為空! 無法讀取")
                     logging.basicConfig(filename="log.txt", level=logging.WARNING)
-                    logging.debug("XML檔案內容為空! 無法讀取")
+                    logging.debug(f"{download_first} XML檔案內容為空! 無法讀取")
 
                 print(f"VD file has problem! Now delete it!")
                 # 刪除壓縮檔
@@ -269,4 +269,5 @@ if __name__ == "__main__":
     calculate_running_time(start=start)
 
     print("All Tasks Done! 所有工作已完成!")
+
 
