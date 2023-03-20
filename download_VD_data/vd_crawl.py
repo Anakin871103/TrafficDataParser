@@ -13,26 +13,25 @@ import xml.etree.ElementTree as ET
 import gzip
 import dateutil.relativedelta
 import shutil
+import logging
 
 ### 20230302 初步完成 但還沒做檔案下載驗證
 
 #起始日和最終日(總抓取天數為最終日-起始日+1)
-FIRST_DATE = '2020-01-01'
-LAST_DATE = '2020-01-02'
+FIRST_DATE = '2022-05-01'
+LAST_DATE = '2022-05-01'
 
 # 儲存VD資料的位置
-PATH_DATABASE = {1: 'C:/VD_1分鐘資料', 5: 'C:/VD_5分鐘資料'}
-# VD檔案名稱(前綴)
+PATH_DATABASE = {1: 'D:/VD_1分鐘資料', 5: 'D:/VD_5分鐘資料'}
+# VD檔案名稱(prefix)
 VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
 
 #雲端資料庫網址
 VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
 
 #國道VD里程範圍抓取
-VD_mile_do={'N1':100.9,'N3':110.8}
-VD_mile_dont=['N1H','N2','N3A','N3N','N3K','5N','5S','N5']
-
-
+VD_MILE_CHECK = {'N1': 100.9, 'N3': 110.8}
+VD_MILE_DONT_CHECK = ['N1H', 'N2', 'N3A', 'N3N', 'N3K', '5N', '5S', 'N5']
 
 def create_dict_forMonth(path, first_day: datetime.datetime,
                 last_day: datetime.datetime):
@@ -71,6 +70,7 @@ def decompress(path_save_compress,download_first):
 def download_vd_data(path1, path2, start_day):
     VD_DATA_COLNAME = ['version', 'listname', 'updatetime', 'interval', 'vdid', 'status', 'datacollecttime', 'vsrdir', 'vsrid',
          'speed', 'laneoccupy', 'carid', 'volume']
+
 
     url = VD_FILE_URL
     year = str(start_day.year) + '年'
@@ -114,6 +114,9 @@ def download_vd_data(path1, path2, start_day):
             except ET.ParseError as e:
                 if e.code == 3:
                     print("XML檔案內容為空! 無法讀取")
+                    logging.basicConfig(filename="log.txt", level=logging.WARNING)
+                    logging.debug("XML檔案內容為空! 無法讀取")
+
                 print(f"VD file has problem! Now delete it!")
                 # 刪除壓縮檔
                 if os.path.exists(download_first):
@@ -150,21 +153,26 @@ def download_vd_data(path1, path2, start_day):
 
                         VD_info = layer3_data[4].split('-')
                         VD_info = [VD_info[i] for i in range(len(VD_info)) if VD_info[i] != '']
+                        # Ex.VD_info = ['nfbVD', 'N3', 'N', '25', 'O', 'SN', '1', '木柵休息站']
+
                         if len(VD_info) > 2:
                             Freeway = VD_info[1]
 
-                            # 檢查國道種類
-                            check_freeway_type = 0
-                            # 需檢查里程的國道
-                            if Freeway in VD_mile_do.keys():
-                                mile = float(VD_info[3])
-                                if mile < VD_mile_do[Freeway]:
-                                    check_freeway_type = 1
-                            # 不需檢查的國道
-                            elif Freeway in VD_mile_dont:
-                                check_freeway_type = 1
+                            # 檢查這筆VD紀錄要納入或略過.
+                            include_VD_data = False
 
-                            if check_freeway_type > 0:
+                            # 需檢查VD位置里程的國道. 並不是每個國道的VD都需要檢查, 有在VD_MILE_CHECK裡的才要
+                            if Freeway in VD_MILE_CHECK.keys(): #若該VD所在的國道有需要
+                                mile = float(VD_info[3])
+                                if mile < VD_MILE_CHECK[Freeway]: #若該VD里程位於指定的里程範圍內
+                                    #要把這個VD的資料納進來蒐集
+                                    include_VD_data = True
+
+                            # 不需檢查的國道
+                            elif Freeway in VD_MILE_DONT_CHECK:
+                                include_VD_data = True
+
+                            if include_VD_data:
                                 # 抓layer3的子root-->稱layer4
                                 for layer4 in layer3:
                                     layer4_data = layer3_data[:]
@@ -180,8 +188,14 @@ def download_vd_data(path1, path2, start_day):
                                             layer5_data.append(layer5.attrib[catch_layer5])
 
                                         writer.writerow(layer5_data)
+
+                        else:
+                            logging.basicConfig(filename="log.txt", level=logging.WARNING)
+                            logging.debug(f"VD_Info = {VD_info} It might be wrong!")
+
+
                 os.remove(path_read_xml)
-                print(f"Catch success!")
+                print(f"Crawl success!")
 
             else:
                 print(f"Read file failed!")
@@ -240,7 +254,7 @@ if __name__ == "__main__":
         # 刪除下載資料夾
         shutil.rmtree(path_download_dict)
 
-        print("The whole data download success! 全部資料已下載完成!")
+        print("全部資料已下載完成!")
 
         return 0
 
