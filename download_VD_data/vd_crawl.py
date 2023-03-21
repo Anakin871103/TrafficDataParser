@@ -14,11 +14,10 @@ import gzip
 import dateutil.relativedelta
 import shutil
 import logging
-
-### 20230302 初步完成 但還沒做檔案下載驗證
+import yagmail
 
 #起始日和最終日(總抓取天數為最終日-起始日+1)
-FIRST_DATE = '2022-02-03'
+FIRST_DATE = '2022-01-29'
 LAST_DATE = '2022-12-31'
 
 # 儲存VD資料的位置
