@@ -17,7 +17,7 @@ import logging
 import yagmail
 
 #起始日和最終日(總抓取天數為最終日-起始日+1)
-FIRST_DATE = '2022-01-29'
+FIRST_DATE = '2022-12-15'
 LAST_DATE = '2022-12-31'
 
 # 儲存VD資料的位置
