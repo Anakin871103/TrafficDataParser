@@ -3,7 +3,7 @@
 Created on Tue Jan  3 10:01:03 2023
 @author: user
 """
-from selenium import webdriver
+# from selenium import webdriver
 import requests as request 
 import os 
 import csv
@@ -18,8 +18,8 @@ COLS = ['測站時間', '測站氣壓', '海平面氣壓', '氣溫', '露點溫�
 
 WEATHER_STATION_FILE_PATH = ''
 WEATHER_STATION_FILE_NAME = '測站網址(1).csv'
-DOWNLOAD_PATH = 'D:/2023_FreewayAccidentAnalysis_Data/Central Weather Bureau/'
-CONFIG_FILE_PATH = 'C:/Users/WangRabbit/Documents/GitHub/TrafficDataParser/download_weather_data/config1.ini'
+DOWNLOAD_PATH = 'E:/Central Weather Bureau/'
+CONFIG_FILE_PATH = './config1.ini'
  #指定從第幾個測站開始下載(依照csv編號)
 FIRST_DATE = '2022-01-01'
 LAST_DATE = '2022-12-31'
