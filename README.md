@@ -5,9 +5,12 @@ I am still working on the descriptions of this package.
 See you later.
 
 
-## How to install
+## How to use
 
+### Install
 pip install git+https://github.com/HsuanChih-Wang/TrafficDataParser.git
+### Upgrade
+pip install git+https://github.com/HsuanChih-Wang/TrafficDataParser.git --upgrade
 
 # Download Freeway Traffic Data
 
