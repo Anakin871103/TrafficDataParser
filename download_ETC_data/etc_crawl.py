@@ -81,14 +81,12 @@ def download_data(year:str, firstDate:str, lastDate:str, dataType:str):
             #刪除原本的壓縮檔
             if os.path.exists(download_ETC_fileName):
                 os.remove(download_ETC_fileName)
-
             print(month + day + " is downloaded")
 
         start = start + datetime.timedelta(days=1)
 
 
 def combine_data(firstDate: str, lastDate:str, dataType: str):
-
 
     start = datetime.datetime.strptime(firstDate, '%Y-%m%d')
     end = datetime.datetime.strptime(lastDate, '%Y-%m%d')
@@ -121,12 +119,12 @@ def combine_data(firstDate: str, lastDate:str, dataType: str):
             try:
                 dfTemp = pd.read_csv(fileName + ".csv") #讀取csv
                 dfTemp.columns = COLUMN_NAMES[dataType] #存取欄位名稱
-                dfAppend = dfAppend.append(dfTemp, ignore_index=True) #把資料新增進去
+                dfAppend = pd.concat([dfAppend, dfTemp], ignore_index=True) #把資料新增進去
                 print(f"Combined {dataType} -> {year}-{month}-{day}-{hour}-{min}-{second} successfully!")
-            except pd.errors.EmptyDataError as e1:
+            except pd.errors.EmptyDataError:
                 #例外處理: 內容為空
                 print(f"Ignore {dataType} -> {year}-{month}-{day}-{hour}-{min}-{second} since it is empty")
-            except FileNotFoundError as e2:
+            except FileNotFoundError:
                 #例外處理: 找不到檔案
                 print(f"Ignore {dataType} -> {year}-{month}-{day}-{hour}-{min}-{second} since file is not found!")
             except KeyboardInterrupt:
