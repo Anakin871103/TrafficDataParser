@@ -55,18 +55,18 @@ class CSVParser():
 
     def readCSVfile(self, encoding, **kwargs):
 
-        try:
-            self.CSVFileContent = pd.read_csv(filepath_or_buffer=self.path, encoding=encoding, **kwargs)
-            self.CSVFileColumnNames = self.CSVFileContent.columns.values.tolist()
+        #try:
+        self.CSVFileContent = pd.read_csv(filepath_or_buffer=self.path, encoding=encoding, **kwargs)
+        self.CSVFileColumnNames = self.CSVFileContent.columns.values.tolist()
 
-        except FileNotFoundError:
-            print(f'file : {os.path.join(self.fileRoute, self.fileName)} not found!')
-            raise FileNotFoundError
-
-        except UnicodeDecodeError:
-            print(f'file directory: {os.path.join(self.fileRoute, self.fileName)} can not be decoded by "utf-8"!'
-                  f'Please check encoded type of the file and specify decoded type!')
-            raise UnicodeDecodeError
+        # except FileNotFoundError:
+        #     print(f'file : {os.path.join(self.fileRoute, self.fileName)} not found!')
+        #     raise FileNotFoundError
+        #
+        # except UnicodeDecodeError:
+        #     print(f'file directory: {os.path.join(self.fileRoute, self.fileName)} can not be decoded by "utf-8"!'
+        #           f'Please check encoded type of the file and specify decoded type!')
+        #     raise UnicodeDecodeError
 
     # def writeCSVfile(self, newfileName, data, **kwargs):
     #     data.to_csv(newfileName, **kwargs)
