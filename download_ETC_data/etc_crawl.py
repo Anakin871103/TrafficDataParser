@@ -10,6 +10,7 @@ import tarfile
 import datetime
 import pandas as pd
 import winsound
+import configparser
 SOUND_FREQ = 2500  # Set Frequency To 2500 Hertz
 SOUND_DURATION = 1000  # Set Duration To 1000 ms == 1 second
 
@@ -21,9 +22,8 @@ COLUMN_NAMES = {'M03A': ['TimeInterval', 'GantryID', 'Direction', 'VehicleType',
 
 ETC_DATATYPE_LIST = ['M03A', 'M04A', 'M05A', 'M06A', 'M07A', 'M08A']
 
-DOWNLOAD_PATH = "D:/freewayData/ETC_2022/download"
-COMBINATION_PATH = "D:/freewayData/ETC_2022/combination"
-ETC_DATA_TIMESTEP = 5  # ETC資料產出時階，目前都是5分鐘一筆
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 def change_directory(path: str):
     #If the target path (directories) does not exist, will create one and inform users.
@@ -152,7 +152,28 @@ def combine_data(firstDate: str, lastDate:str, dataType: str):
     print("COMBINATION TASKS DONE!")
 
 
+def read_config_file():
+    CONFIG_FILE_NAME = 'etc_config.ini'
+    config = configparser.ConfigParser()
+    config.read(os.path.join(BASE_DIR, CONFIG_FILE_NAME))
+    # Get values from the configuration file
+    global DOWNLOAD_PATH
+    global COMBINATION_PATH
+    global ETC_DATA_TIMESTEP
+    DOWNLOAD_PATH = config.get('setting', 'download_path')
+    COMBINATION_PATH = config.get('setting', 'combination_path')
+    ETC_DATA_TIMESTEP = int(config.get('setting', 'data_timestamp'))
+    print(f"Successfully read config file:")
+    print(f"Download Path = {DOWNLOAD_PATH}")
+    print(f"COMBINATION_PATH = {COMBINATION_PATH}")
+    print(f"ETC_DATA_TIMESTAMP (ETC資料頻率(min)) = {ETC_DATA_TIMESTEP}")
+
+    return 0
+
 if __name__ == "__main__":
+    read_config_file()
+
+
     #Program Start
     while True:
         mode = input("Mode 1 = Download Data / Mode 2 = Combine Data. Please Enter Mode: ")
