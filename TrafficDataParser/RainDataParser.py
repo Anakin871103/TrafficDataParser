@@ -1,5 +1,6 @@
-import module.CSVParser as CSVParser
+import CSVParser as CSVParser
 from datetime import datetime
+import pandas as pd
 
 class RainDataParser(CSVParser.CSVParser):
     def __init__(self, fileRoute, fileName):

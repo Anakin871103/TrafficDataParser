@@ -19,7 +19,7 @@ VDID = 'nfbVD-N1-N-86.122-M-RS'
 class TrafficDataTester(TrafficDataParser):
     def get_compressedVD_content(self, vdid, dateTime: datetime):
         print(f"vdid = {vdid}, dateTime = {dateTime}")
-        c1 = self.CSVFileContent['vd_id'] == vdid
+        c1 = (self.CSVFileContent['vd_id'] == vdid)
         result = self.CSVFileContent.loc[c1]
         content = result["{小時:{分:{車道:[speed,laneoccupy,S_volume,T_volume,L_volume]}}}   字典提取方法:字典名稱[hr][minute][lane]=[車速,佔有率,S,T,L]"]
         index = list(dict(content).keys())[0]

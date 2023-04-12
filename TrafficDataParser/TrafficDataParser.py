@@ -2,8 +2,8 @@
 Author: Hsuan-Chih (Leo) Wang
 Date: 2022/7/31
 Introduction:
-A traffic data parser which supports two types of traffic data (VD and Etag) as input.
-Users can retrieve traffic characters in the data, such as:
+A traffic data parser which supports two types of traffic data (VD and Etag) as input data.
+Users can retrieve traffic characters in the data. For example:
 (1)Speed (space speed or spot speed, depending on the type of traffic data)
 (2)Traffic volume (cars, trucks, buses)
 (3)Occupancy (only provided in VD data)
@@ -16,10 +16,7 @@ which is defined as the proportion of the volume of heavy vehicles to all vehicl
 
 '''
 
-import csv
-import module.CSVParser as CSVParser
-import os
-import pandas as pd
+import CSVParser as CSVParser
 import numpy as np
 from datetime import datetime
 

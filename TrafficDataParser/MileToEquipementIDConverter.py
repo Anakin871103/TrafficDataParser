@@ -1,6 +1,6 @@
 
 import numpy as np
-import module.CSVParser as CSVParser
+import CSVParser as CSVParser
 
 class NotFindEquipmentIDError(Exception):
     """Exception raised for errors in the input arguments.
