@@ -88,38 +88,6 @@ class TrafficDataParser(CSVParser.CSVParser):
 
         return round(result, 1)
 
-    def __get_trafficVolumes(self, dateTime: datetime, gantryID, direction):
-        '''EXAMPLE:
-        dateTime = %Y/%m/%d %H:%M
-        Direction = 北
-        TimeInterval =  2020-02-10 00:00
-        trafficVolumeDict = {31: 0, 32: 0, 41: 0, 42: 0, 5: 0}
-        '''
-
-        tempResults = {'5': 0, '31': 0, '32': 0, '41': 0, '42': 0}
-        directionEng = covertDirectionToEng[direction]
-
-        c1 = (self.CSVFileContent['TimeInterval'] == dateTime.strftime("%Y-%m-%d %H:%M"))
-        c2 = (self.CSVFileContent['GantryID'] == gantryID)
-        c3 = (self.CSVFileContent['Direction'] == directionEng)
-        result = self.CSVFileContent.loc[c1 & c2 & c3]
-
-        if result.empty:
-            raise NotFindDataIndexError(inputArgs={'dateTime': dateTime.strftime("%Y-%m-%d %H:%M"), 'gantryID': gantryID, 'direction': direction})
-
-        vehTypeList = result['VehicleType'].tolist()
-        trafficList = result['Traffic'].tolist()
-        for i in range(5):
-            tempResults.update({str(vehTypeList[i]): trafficList[i]})
-
-        self.trafficVolumeDict['S'] = int(tempResults['31']) + int(tempResults['32'])
-        self.trafficVolumeDict['L'] = int(tempResults['41']) + int(tempResults['42'])
-        self.trafficVolumeDict['T'] = int(tempResults['5'])
-        self.trafficVolumeDict['PCU'] = self.get_PCU_Volumes()
-        self.trafficVolumeDict['volume'] = self.get_totalTrafficVolumes()
-
-        return self.trafficVolumeDict
-
     def get_trafficVolumes(self, dateTime: datetime, gantryID, direction):
         '''EXAMPLE:
         dateTime = %Y-%m-%d %H:%M
@@ -254,6 +222,7 @@ class TrafficDataParser(CSVParser.CSVParser):
         return self.trafficVolumeDict, self.trafficSpeedDict
 
     def get_trafficCharactersFromVD_new(self, vdid, dateTime: datetime):
+        ''' This is for 智勛's conversion work on VD data (有壓縮過的VD資料) '''
         dateTimeInStr = dateTime.strftime("%Y/%m/%d %H:%M:%S")
         c1 = self.CSVFileContent['vd_id'] == vdid[0]
         c2 = self.CSVFileContent['vd_id'] == vdid[1]
