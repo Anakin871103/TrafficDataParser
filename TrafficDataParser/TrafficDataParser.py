@@ -16,7 +16,7 @@ which is defined as the proportion of the volume of heavy vehicles to all vehicl
 
 '''
 
-import CSVParser as CSVParser
+import CSVParser
 import numpy as np
 from datetime import datetime
 
