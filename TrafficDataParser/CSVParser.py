@@ -44,3 +44,4 @@ class CSVParser():
             print(f"columnName: {columnName} is not existed in the columnNameList {self.CSVFileColumnNames}")
             raise ValueError
         return index
+

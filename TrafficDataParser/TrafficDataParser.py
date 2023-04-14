@@ -166,7 +166,7 @@ class TrafficDataParser(CSVParser.CSVParser):
 
         return self.trafficSpeedDict
 
-    def get_trafficCharactersFromVD(self, dateTime: datetime, vdid: list):
+    def _get_trafficCharactersFromVD(self, dateTime: datetime, vdid: list):
         ''' (1)datetime -> %Y-%m-%d %H:%M (2) dateTime: please pass "endtime" instead of "starttime"
         (3)vdid -> [mainVD, backupVD] '''
         dateTimeInStr = dateTime.strftime("%Y/%m/%d %H:%M:%S")

@@ -1,8 +1,15 @@
 import CSVParser as CSVParser
 from datetime import datetime
 import pandas as pd
+import numpy as np
 
-class RainDataParser(CSVParser.CSVParser):
+class RainDataParser_forWBU(CSVParser.CSVParser):
+
+    '''
+    此類別(class)專門for中央氣象局付費購買之資料集使用
+    資料位置: NAS/中央氣象局/
+    '''
+
     def __init__(self, fileRoute, fileName):
         super().__init__(fileRoute, fileName)
 

@@ -17,8 +17,8 @@ import logging
 import yagmail
 
 #起始日和最終日(總抓取天數為最終日-起始日+1)
-FIRST_DATE = '2022-12-15'
-LAST_DATE = '2022-12-31'
+FIRST_DATE = '2021-02-08'
+LAST_DATE = '2021-12-31'
 
 # 儲存VD資料的位置
 PATH_DATABASE = {1: 'E:/VD_1分鐘資料', 5: 'E:/VD_5分鐘資料'}
