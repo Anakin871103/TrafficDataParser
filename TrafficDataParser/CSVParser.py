@@ -1,6 +1,7 @@
 import csv
 import os
 import pandas as pd
+import numpy as np
 
 # colunmName = ['startkilo', 'endkilo', 'year', 'date', 'starttime', 'endtime', 'crash',
 #               'lane', 'minlane', 'addlane', 'totalwidth', 'lanewidth',
@@ -21,7 +22,6 @@ class CSVParser():
         self.path = os.path.join(self.fileRoute, self.fileName)
         self.CSVFileContent = []
         self.CSVFileColumnNames = 0
-
 
     def readCSVfile(self, encoding, **kwargs):
         self.CSVFileContent = pd.read_csv(filepath_or_buffer=self.path, encoding=encoding, **kwargs)
@@ -45,4 +45,10 @@ class CSVParser():
             raise ValueError
         return index
 
-
+    def generate_skiprows(self, startRow: int, endRow: int) -> np.ndarray:
+        originalNumberOfRows = self.get_CSVFileOriginalNumberOfRows()
+        allRows = np.array([i for i in np.arange(originalNumberOfRows+1)])
+        wantedRows = np.array([0] + [i for i in np.arange(startRow, endRow+1)])  # [0] -> row of column names
+        skipRows = np.delete(allRows, wantedRows)
+        print(f"WANTED ROWS = 0 (col row) and {startRow} ~ {endRow}")
+        return skipRows
