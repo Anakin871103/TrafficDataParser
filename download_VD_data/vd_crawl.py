@@ -28,6 +28,8 @@ VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
 #雲端資料庫網址
 VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
 
+## https://tisvcloud.freeway.gov.tw/history/motc20/VD/20230410/VD_0000.xml.gz
+
 #國道VD里程範圍抓取
 VD_MILE_CHECK = {'N1': 100.9, 'N3': 110.8}
 VD_MILE_DONT_CHECK = ['N1H', 'N2', 'N3A', 'N3N', 'N3K', '5N', '5S', 'N5']
