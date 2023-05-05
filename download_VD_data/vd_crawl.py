@@ -14,7 +14,7 @@ import gzip
 import dateutil.relativedelta
 import shutil
 import logging
-import yagmail
+
 
 #起始日和最終日(總抓取天數為最終日-起始日+1)
 FIRST_DATE = '2021-02-08'
@@ -22,6 +22,7 @@ LAST_DATE = '2021-12-31'
 
 # 儲存VD資料的位置
 PATH_DATABASE = {1: 'E:/VD_1分鐘資料', 5: 'E:/VD_5分鐘資料'}
+
 # VD檔案名稱(prefix)
 VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
 
@@ -103,6 +104,7 @@ def download_vd_data(path1, path2, start_day):
                 f.write(html.content)
 
             check_decompress = 0
+            
             try:
                 # 解壓縮
                 decompress(path2, download_first)
@@ -127,7 +129,7 @@ def download_vd_data(path1, path2, start_day):
                 if os.path.exists(path_read_xml):
                     os.remove(path_read_xml)
 
-                # raise e
+
 
             # 讀XML檔成功
             if check_decompress == 1:
@@ -192,6 +194,7 @@ def download_vd_data(path1, path2, start_day):
                                         writer.writerow(layer5_data)
 
                         else:
+                            # bug: 此段log 沒有作用
                             logging.basicConfig(filename="log.txt", level=logging.WARNING)
                             logging.debug(f"VD_Info = {VD_info} It might be wrong!")
 
