@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Aug  3 20:36:53 2022
-@author: Leo Wang
-"""
+
+__author__ = 'Hsuan-Chih Wang'
+__date__ = '20230505'
+__version__ = '1.0'
+__description__ = """To download VD data from Freeway Bureau of Taiwan."""
+
 
 import requests
 import csv
@@ -72,7 +74,6 @@ def decompress(path_save_compress,download_first):
 def download_vd_data(path1, path2, start_day):
     VD_DATA_COLNAME = ['version', 'listname', 'updatetime', 'interval', 'vdid', 'status', 'datacollecttime', 'vsrdir', 'vsrid',
          'speed', 'laneoccupy', 'carid', 'volume']
-
 
     url = VD_FILE_URL
     year = str(start_day.year) + '年'
@@ -212,6 +213,10 @@ def download_vd_data(path1, path2, start_day):
         start_day = start_day + datetime.timedelta(minutes=vd_dataFrequency)
 
     write_file.close()
+
+# 下載靜態VD資料
+def download_static_vd():
+    return 0
 
 
 
