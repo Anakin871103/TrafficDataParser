@@ -45,12 +45,12 @@ class CSVParser():
             raise ValueError
         return index
 
-    def generate_skiprows(self, startRow: int, endRow: int) -> np.ndarray:
+    def generate_skiprows(self, desired_start_row: int, desired_end_row: int) -> np.ndarray:
         # this is for the "skiprows" parameters in pd.read(). 
         # It will generate a set of number of "rows" that should be skipped accodrding to user's input. 
         originalNumberOfRows = self.get_CSVFileOriginalNumberOfRows()
         allRows = np.array([i for i in np.arange(originalNumberOfRows+1)])
-        wantedRows = np.array([0] + [i for i in np.arange(startRow, endRow+1)])  # [0] -> row of column names
+        wantedRows = np.array([0] + [i for i in np.arange(desired_start_row, desired_end_row+1)])  # [0] -> row of column names
         skipRows = np.delete(allRows, wantedRows)
-        print(f"WANTED ROWS = 0 (col row) and {startRow} ~ {endRow}")
+        print(f"WANTED ROWS = 0 (col row) and {desired_start_row} ~ {desired_end_row}")
         return skipRows
