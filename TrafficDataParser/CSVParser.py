@@ -44,11 +44,10 @@ class CSVParser():
             print(f"columnName: {columnName} is not existed in the columnNameList {self.CSVFileColumnNames}")
             raise ValueError
         return index
-    
-    # this is for the "skiprows" parameters in pd.read(). 
-    # It will generate a set of number of "rows" that should be skipped accodrding to user's input. 
 
     def generate_skiprows(self, startRow: int, endRow: int) -> np.ndarray:
+        # this is for the "skiprows" parameters in pd.read(). 
+        # It will generate a set of number of "rows" that should be skipped accodrding to user's input. 
         originalNumberOfRows = self.get_CSVFileOriginalNumberOfRows()
         allRows = np.array([i for i in np.arange(originalNumberOfRows+1)])
         wantedRows = np.array([0] + [i for i in np.arange(startRow, endRow+1)])  # [0] -> row of column names
