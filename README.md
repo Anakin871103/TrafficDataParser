@@ -3,7 +3,7 @@ This package provides a handy toolbox for users to download and process the traf
 
 I am still working on this package. See you later.
 
-## How to use
+## Usage
 
 ### Install
 pip install git+https://github.com/HsuanChih-Wang/TrafficDataParser.git
