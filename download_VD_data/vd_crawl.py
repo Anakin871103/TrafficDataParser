@@ -19,23 +19,29 @@ import logging
 
 
 #起始日和最終日(總抓取天數為最終日-起始日+1)
-FIRST_DATE = '2021-02-08'
-LAST_DATE = '2021-12-31'
+FIRST_DATE = '2023-03-22'
+LAST_DATE = '2023-03-22'
 
 # 儲存VD資料的位置
 PATH_DATABASE = {1: 'E:/VD_1分鐘資料', 5: 'E:/VD_5分鐘資料'}
 
 # VD檔案名稱(prefix)
-VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
+#for v1.1 -> 1: 'vd_value_', 5: 'vd_value5_'
+#for v2.0 -> 1: 'VDLive_', 5: 'VDLive_'
+VD_FILENAME_PREFIX = {1: 'VDLive_', 5: 'VDLive_'}
 
-#雲端資料庫網址
-VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
+#雲端資料庫網址 (1.1版) -> 'https://tisvcloud.freeway.gov.tw/history/_vd/'
+#雲端資料庫網址 (2.0版) -> 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
+
+VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
 
 ## https://tisvcloud.freeway.gov.tw/history/motc20/VD/20230410/VD_0000.xml.gz
 
 #國道VD里程範圍抓取
-VD_MILE_CHECK = {'N1': 100.9, 'N3': 110.8}
-VD_MILE_DONT_CHECK = ['N1H', 'N2', 'N3A', 'N3N', 'N3K', '5N', '5S', 'N5']
+## 北分範圍: {'N1': 100.9, 'N3': 110.8}
+
+VD_MILE_CHECK = {'N2': 100, 'N2A':100}
+VD_MILE_DONT_CHECK = ['N1H', 'N1', 'N3A', 'N3N', 'N3K', '5N', '5S', 'N5']
 
 def create_dict_forMonth(path, first_day: datetime.datetime,
                 last_day: datetime.datetime):
@@ -95,6 +101,7 @@ def download_vd_data(path1, path2, start_day):
         print(f"Try to crawl VD data, the datetime = {catch_time}")
 
         file_name = VD_FILENAME_PREFIX[vd_dataFrequency] + day_time + '.xml.gz'
+        # VDLive_2358.xml.gz
         catch_file_path = url + '/' + date + '/' + file_name
         html = requests.get(catch_file_path)
 
