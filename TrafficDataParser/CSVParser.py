@@ -3,17 +3,6 @@ import os
 import pandas as pd
 import numpy as np
 
-# colunmName = ['startkilo', 'endkilo', 'year', 'date', 'starttime', 'endtime', 'crash',
-#               'lane', 'minlane', 'addlane', 'totalwidth', 'lanewidth',
-#               'inshoulder', 'outshoulder', 'upslope','downslope','upslopelength',
-#               'downslopelength', 'maxupslope', 'maxdownslope', 'curvelength', 'minradiuslength','minradius',
-#               'continuouscurve', 'pavement', 'cement', 'interchange', 'tunnellength', 'tunnelin',
-#               'tunnelout', 'remark', 'one', 'shouderoallow', 'speedlimit', 'camera',
-#               'service', 'windspeed', 'rain', 'Var_windspeed', 'Var_rain', 'volume_S', 'volume_L',
-#               'volume_T', 'volume', 'PCU', 'Speed_volume', 'Speed_PCU', 'heavy_rate',
-#               'Var_volume', 'Var_PCU', 'Var_Speed_volume', 'Var_Speed_PCU']
-
-
 class CSVParser():
 
     def __init__(self, fileRoute, fileName):
