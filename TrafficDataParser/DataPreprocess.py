@@ -2,9 +2,9 @@ import csv
 import os
 import pandas as pd
 import numpy as np
-import general
+import General
 
-class Preprocess(general.General):
+class Preprocess(General.General):
 
     def __init__(self, data: pd.DataFrame):
         self.data = data
