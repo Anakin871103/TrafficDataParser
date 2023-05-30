@@ -2,9 +2,9 @@ import csv
 import os
 import pandas as pd
 import numpy as np
-import General
+import general
 
-class CSVParser(General):
+class CSVParser(general.General):
 
     def __init__(self, fileRoute, fileName):
         self.fileRoute = fileRoute
@@ -44,3 +44,4 @@ class CSVParser(General):
         skipRows = np.delete(allRows, wantedRows)
         print(f"WANTED ROWS = 0 (col row) and {desired_start_row} ~ {desired_end_row}")
         return skipRows
+
