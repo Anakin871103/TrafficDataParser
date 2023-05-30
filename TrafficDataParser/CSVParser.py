@@ -2,8 +2,9 @@ import csv
 import os
 import pandas as pd
 import numpy as np
+import General
 
-class CSVParser():
+class CSVParser(General):
 
     def __init__(self, fileRoute, fileName):
         self.fileRoute = fileRoute
