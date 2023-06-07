@@ -19,8 +19,8 @@ import logging
 
 
 #起始日和最終日(總抓取天數為最終日-起始日+1)
-FIRST_DATE = '2023-03-22'
-LAST_DATE = '2023-03-22'
+FIRST_DATE = ''
+LAST_DATE = ''
 
 # 儲存VD資料的位置
 PATH_DATABASE = {1: 'E:/VD_1分鐘資料', 5: 'E:/VD_5分鐘資料'}
@@ -28,20 +28,20 @@ PATH_DATABASE = {1: 'E:/VD_1分鐘資料', 5: 'E:/VD_5分鐘資料'}
 # VD檔案名稱(prefix)
 #for v1.1 -> 1: 'vd_value_', 5: 'vd_value5_'
 #for v2.0 -> 1: 'VDLive_', 5: 'VDLive_'
-VD_FILENAME_PREFIX = {1: 'VDLive_', 5: 'VDLive_'}
+VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
 
 #雲端資料庫網址 (1.1版) -> 'https://tisvcloud.freeway.gov.tw/history/_vd/'
 #雲端資料庫網址 (2.0版) -> 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
 
-VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
+VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
 
 ## https://tisvcloud.freeway.gov.tw/history/motc20/VD/20230410/VD_0000.xml.gz
 
 #國道VD里程範圍抓取
 ## 北分範圍: {'N1': 100.9, 'N3': 110.8}
 
-VD_MILE_CHECK = {'N2': 100, 'N2A':100}
-VD_MILE_DONT_CHECK = ['N1H', 'N1', 'N3A', 'N3N', 'N3K', '5N', '5S', 'N5']
+VD_MILE_CHECK = {'N1': 100.9, 'N3': 110.8}
+VD_MILE_DONT_CHECK = ['N1H', 'N3A', 'N3N', 'N3K', '5N', '5S', 'N5']
 
 def create_dict_forMonth(path, first_day: datetime.datetime,
                 last_day: datetime.datetime):
@@ -208,23 +208,22 @@ def download_vd_data(path1, path2, start_day):
 
 
                 os.remove(path_read_xml)
-                print(f"Crawl success!")
+                print(f"[Info] Crawl success!")
 
             else:
-                print(f"Read file failed!")
+                print(f"[Warning] Read file failed!")
 
         else:
-            print(f"Catch failed!")
+            print(f"[Warning] Catch failed!")
 
         #下載
         start_day = start_day + datetime.timedelta(minutes=vd_dataFrequency)
 
     write_file.close()
 
-# 下載靜態VD資料
+# 下載靜態VD資料 (still working)
 def download_static_vd():
     return 0
-
 
 
 if __name__ == "__main__":
@@ -234,12 +233,18 @@ if __name__ == "__main__":
 
     def ask_input_vdFreq() -> int:
         # 要求使用者輸入欲下載VD資料時間頻率(1分鐘或5分鐘)
+        global FIRST_DATE 
+        global LAST_DATE
+        
         while True:
             vd_dataFrequency = int(input("資料下載頻率(1分鐘或5分鐘): "))
             if vd_dataFrequency not in [1, 5]:
                 print(f"不接受{str(vd_dataFrequency)}. 只能輸入1或5, 請再試一次!")
             else:
+                FIRST_DATE = input("請輸入資料下載的起始日期: yyyy-mm-dd\n")
+                LAST_DATE = input("請輸入資料下載的終止日期: yyyy-mm-dd\n")
                 break
+        print(f"想下載的資料頻率 = {vd_dataFrequency} / 起始日期 = {FIRST_DATE} / 終止日期 = {LAST_DATE}")
         return vd_dataFrequency
 
     def download_data(firstDay: datetime.datetime, lastDay:datetime.datetime):
