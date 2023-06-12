@@ -21,20 +21,31 @@ MINUTE_TYPE = 5
 
 #起始日和最終日
 FIRST_DATE = '2022-01-01'
-LAST_DATE = '2022-12-13'
+LAST_DATE = '2022-03-31'
 
 PATH_READ = 'E://VD_5分鐘資料/'
-PATH_MOTHER = 'E://壓縮後VD/'
+PATH_MOTHER = 'E://壓縮後VD_test/'
 
-#創每月資料夾
+## Export files ny MONTH or Day
+EXPOR_UNIT_DICT = {i: for i in range(1)}
+
+
+#創每月或每日資料夾
 def create_dict(path_VD, firstDate, lastDate):
+
     while firstDate < lastDate:
-        year = str(firstDate.year)+'年'
+
+        year = str(firstDate.year) + '年'
         path_year=os.path.join(path_VD,year)
         if not os.path.isdir(path_year):
             os.mkdir(path_year)
         
-        firstDate = firstDate + dateutil.relativedelta.relativedelta(years=1)
+        if EXPORT_UNIT == 'day':
+            month = str(firstDate.month) + '月'
+            path_month = os.path.join(path_VD, year, month)
+            os.makedirs(path_month, exist_ok=True)
+
+        firstDate = firstDate + dateutil.relativedelta.relativedelta(months=1)
 
 
 def calculate_running_time(startTime: float):
@@ -50,6 +61,17 @@ def calculate_running_time(startTime: float):
 
 
 if __name__ == "__main__":
+
+    
+
+    def start():
+        global EXPORT_UNIT
+        input("")
+
+        return 0
+
+
+
     # for running time calculation
     startTime = time.time()
 
@@ -73,17 +95,23 @@ if __name__ == "__main__":
     create_dict(path_VD, firstDate, lastDate)
 
     #讀取資料並寫入
+    
     Header = ['vd_id','日期','{小時:{分:{車道:[speed,laneoccupy,S_volume,T_volume,L_volume]}}}   字典提取方法:字典名稱[hr][minute][lane]=[車速,佔有率,S,T,L]']
+    
     #每月的迴圈尋找
     while firstDate < lastDate:
         # define day
         day = firstDate.day
         # define start day and end day
         startDay = firstDate
-        endDay = firstDate + dateutil.relativedelta.relativedelta(months=1)
+        
+        ## endDay = firstDate + dateutil.relativedelta.relativedelta(months=1) 20230612
+        endDay = firstDate + dateutil.relativedelta.relativedelta(days=1)
 
         # define CSV writer
-        path_write_file = os.path.join(path_VD, str(firstDate.year)+'年', str(firstDate.month)+'月.csv')
+        #path_write_file = os.path.join(path_VD, str(firstDate.year)+'年', str(firstDate.month)+'月.csv') #20230612
+        path_write_file = os.path.join(path_VD, str(firstDate.year)+'年', str(firstDate.month)+'月', str(firstDate.day) + '日.csv')
+        
         write_file = open(path_write_file, 'w', newline='', encoding='utf-8')
         writer = csv.writer(write_file)
         writer.writerow(Header)
@@ -92,10 +120,7 @@ if __name__ == "__main__":
         #壓縮一月的資料(每日讀取)
         while startDay < endDay:
             print(f"Current day is  = {startDay}")
-            year = startDay.year
-            month = startDay.month
-            day = startDay.day
-            hour = startDay.hour
+            year, month, day, hour = startDay.year, startDay.month, startDay.day, startDay.hour
             PATH_READ_file = os.path.join(PATH_READ, str(year)+'年', str(month)+'月', str(day)+'日.csv')
 
             #所有VD_ID資料的總整理
@@ -181,7 +206,8 @@ if __name__ == "__main__":
 
         write_file.close()
 
-        firstDate = firstDate + dateutil.relativedelta.relativedelta(months=1)
+        #firstDate = firstDate + dateutil.relativedelta.relativedelta(months=1) #20230612
+        firstDate = firstDate + dateutil.relativedelta.relativedelta(days=1)
 
         calculate_running_time(startTime=startTime)
 
