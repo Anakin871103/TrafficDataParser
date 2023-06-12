@@ -21,31 +21,46 @@ MINUTE_TYPE = 5
 
 #起始日和最終日
 FIRST_DATE = '2022-01-01'
-LAST_DATE = '2022-03-31'
+LAST_DATE = '2022-12-31'
 
 PATH_READ = 'E://VD_5分鐘資料/'
-PATH_MOTHER = 'E://壓縮後VD_test/'
+PATH_MOTHER = os.path.join('E:\\', '壓縮後VD_按日產生', 'VD_' + str(MINUTE_TYPE) + '分鐘資料')
 
 ## Export files ny MONTH or Day
-EXPOR_UNIT_DICT = {i: for i in range(1)}
+EXPOR_UNIT_DICT = {0: 'Month', 1: 'Day'}
 
 
 #創每月或每日資料夾
-def create_dict(path_VD, firstDate, lastDate):
+def create_dict(exportUnitNum: int, firstDate, lastDate):
+
+    os.makedirs(PATH_MOTHER, exist_ok=True)
 
     while firstDate < lastDate:
 
         year = str(firstDate.year) + '年'
-        path_year=os.path.join(path_VD,year)
+        path_year=os.path.join(PATH_MOTHER,year)
         if not os.path.isdir(path_year):
             os.mkdir(path_year)
         
-        if EXPORT_UNIT == 'day':
+        if EXPOR_UNIT_DICT[exportUnitNum] == 'Day':
             month = str(firstDate.month) + '月'
-            path_month = os.path.join(path_VD, year, month)
+            path_month = os.path.join(PATH_MOTHER, year, month)
             os.makedirs(path_month, exist_ok=True)
 
         firstDate = firstDate + dateutil.relativedelta.relativedelta(months=1)
+
+
+def create_header(exportUnitNum: int) -> list:
+    if EXPOR_UNIT_DICT[exportUnitNum] == 'Month':
+        header = ['vd_id','日期','{小時:{分:{車道:[speed,laneoccupy,S_volume,T_volume,L_volume]}}}   字典提取方法:字典名稱[hr][minute][lane]=[車速,佔有率,S,T,L]']
+    elif EXPOR_UNIT_DICT[exportUnitNum] == 'Day':
+        header = ['vd_id','{小時:{分:{車道:[speed,laneoccupy,S_volume,T_volume,L_volume]}}}   字典提取方法:字典名稱[hr][minute][lane]=[車速,佔有率,S,T,L]']
+    else:
+        raise Exception('Exception error!')
+
+    return header
+
+
 
 
 def calculate_running_time(startTime: float):
@@ -62,15 +77,21 @@ def calculate_running_time(startTime: float):
 
 if __name__ == "__main__":
 
-    
 
     def start():
-        global EXPORT_UNIT
-        input("")
+        while True:
+            try:
+                exportUnit = int(input(f"請輸入壓縮後VD輸出單位: {EXPOR_UNIT_DICT}\n"))
+                break
+            except ValueError:
+                print("Please enter integer value. ")
+            except KeyError:
+                print(f"The value {exportUnit} is not listed.")
 
-        return 0
+        return exportUnit
 
-
+    #Start
+    exportUnitNum = start()
 
     # for running time calculation
     startTime = time.time()
@@ -79,47 +100,37 @@ if __name__ == "__main__":
     firstDate = datetime.datetime.strptime(FIRST_DATE, '%Y-%m-%d')
     lastDate = datetime.datetime.strptime(LAST_DATE, '%Y-%m-%d') + datetime.timedelta(days=1)
 
-    # #創母資料夾
-    # if not os.path.isdir(PATH_MOTHER):
-    #     os.mkdir(PATH_MOTHER)
-    # path_VD = os.path.join(PATH_MOTHER,'VD_'+str(MINUTE_TYPE)+'分鐘資料')
-    # #創母資料夾
-    # if not os.path.isdir(path_VD):
-    #     os.mkdir(path_VD)
+    #創資料夾
+    create_dict(exportUnitNum=exportUnitNum, firstDate=firstDate, lastDate=lastDate)
 
-    #創母資料夾
-    path_VD = os.path.join(PATH_MOTHER, 'VD_' + str(MINUTE_TYPE) + '分鐘資料')
-    os.makedirs(path_VD, exist_ok=True)
+    #Get header
+    Header = create_header(exportUnitNum)
 
-    #創年份資料夾
-    create_dict(path_VD, firstDate, lastDate)
-
-    #讀取資料並寫入
-    
-    Header = ['vd_id','日期','{小時:{分:{車道:[speed,laneoccupy,S_volume,T_volume,L_volume]}}}   字典提取方法:字典名稱[hr][minute][lane]=[車速,佔有率,S,T,L]']
-    
     #每月的迴圈尋找
     while firstDate < lastDate:
         # define day
         day = firstDate.day
+        
         # define start day and end day
         startDay = firstDate
-        
-        ## endDay = firstDate + dateutil.relativedelta.relativedelta(months=1) 20230612
-        endDay = firstDate + dateutil.relativedelta.relativedelta(days=1)
+        if EXPOR_UNIT_DICT[exportUnitNum] == 'Month':
+            endDay = firstDate + dateutil.relativedelta.relativedelta(months=1) 
+            path_write_file = os.path.join(PATH_MOTHER, str(firstDate.year)+'年', str(firstDate.month)+'月.csv') #20230612
+        elif EXPOR_UNIT_DICT[exportUnitNum] == 'Day':
+            endDay = firstDate + dateutil.relativedelta.relativedelta(days=1)
+            path_write_file = os.path.join(PATH_MOTHER, str(firstDate.year)+'年', 
+                                       str(firstDate.month)+'月', str(firstDate.day) + '日.csv')
+        else: raise Exception("Exception")
 
-        # define CSV writer
-        #path_write_file = os.path.join(path_VD, str(firstDate.year)+'年', str(firstDate.month)+'月.csv') #20230612
-        path_write_file = os.path.join(path_VD, str(firstDate.year)+'年', str(firstDate.month)+'月', str(firstDate.day) + '日.csv')
-        
         write_file = open(path_write_file, 'w', newline='', encoding='utf-8')
         writer = csv.writer(write_file)
         writer.writerow(Header)
 
-        print(f"Start Compression VD data of each month")
-        #壓縮一月的資料(每日讀取)
+        print(f"Start Compression VD data of each {EXPOR_UNIT_DICT[exportUnitNum]}")
+
+        #壓縮資料(每日讀取)
         while startDay < endDay:
-            print(f"Current day is  = {startDay}")
+            print(f"Current process day is  = {startDay}")
             year, month, day, hour = startDay.year, startDay.month, startDay.day, startDay.hour
             PATH_READ_file = os.path.join(PATH_READ, str(year)+'年', str(month)+'月', str(day)+'日.csv')
 
@@ -201,15 +212,16 @@ if __name__ == "__main__":
                 compress_data=[VD_name,date,Total_VD_data[VD_name]]
                 writer.writerow(compress_data)
 
-
             startDay=startDay+datetime.timedelta(days=1)
 
         write_file.close()
 
-        #firstDate = firstDate + dateutil.relativedelta.relativedelta(months=1) #20230612
-        firstDate = firstDate + dateutil.relativedelta.relativedelta(days=1)
+        if EXPOR_UNIT_DICT[exportUnitNum] == 'Month':
+            firstDate = firstDate + dateutil.relativedelta.relativedelta(months=1) #20230612
+        elif EXPOR_UNIT_DICT[exportUnitNum] == 'Day':
+            firstDate = firstDate + dateutil.relativedelta.relativedelta(days=1)
 
-        calculate_running_time(startTime=startTime)
+        calculate_running_time(startTime)
 
 
 
