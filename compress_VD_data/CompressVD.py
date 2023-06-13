@@ -20,8 +20,8 @@ from dateutil.relativedelta import relativedelta
 MINUTE_TYPE = 5
 
 #起始日和最終日
-FIRST_DATE = '2022-01-01'
-LAST_DATE = '2022-12-31'
+FIRST_DATE = '2021-01-01'
+LAST_DATE = '2021-12-31'
 
 PATH_READ = 'E://VD_5分鐘資料/'
 PATH_MOTHER = os.path.join('E:\\', '壓縮後VD_按日產生', 'VD_' + str(MINUTE_TYPE) + '分鐘資料')
@@ -82,6 +82,7 @@ if __name__ == "__main__":
         while True:
             try:
                 exportUnit = int(input(f"請輸入壓縮後VD輸出單位: {EXPOR_UNIT_DICT}\n"))
+                EXPOR_UNIT_DICT[exportUnit]
                 break
             except ValueError:
                 print("Please enter integer value. ")
@@ -141,7 +142,7 @@ if __name__ == "__main__":
             date=datetime.datetime.strftime(startDay,'%Y-%m-%d')
 
             #讀取每日資料
-            with open(PATH_READ_file, 'r', newline='') as csv_file:
+            with open(PATH_READ_file, 'r', newline='', encoding='Big5') as csv_file:
                 #header略過
                 line=csv_file.readline()
                 #檢查是否至少有三筆資料
@@ -209,7 +210,12 @@ if __name__ == "__main__":
                             catch_data.append(line)
 
             for VD_name in Total_VD_data.keys():
-                compress_data=[VD_name,date,Total_VD_data[VD_name]]
+
+                if EXPOR_UNIT_DICT[exportUnitNum] == 'Month':
+                    compress_data=[VD_name,date,Total_VD_data[VD_name]]
+                elif EXPOR_UNIT_DICT[exportUnitNum] == 'Day':
+                    compress_data=[VD_name,Total_VD_data[VD_name]]
+
                 writer.writerow(compress_data)
 
             startDay=startDay+datetime.timedelta(days=1)
