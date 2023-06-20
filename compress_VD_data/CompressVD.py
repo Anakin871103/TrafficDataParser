@@ -15,22 +15,22 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 
-## 全域變數區 ##
-#壓縮類型資料
+## Gloabal Variables Area ##
+#VD Data type
 MINUTE_TYPE = 5
 
-#起始日和最終日
-FIRST_DATE = '2021-01-01'
-LAST_DATE = '2021-12-31'
+#The date range of the start and the last date
+FIRST_DATE = ''
+LAST_DATE = ''
 
 PATH_READ = 'E://VD_5分鐘資料/'
-PATH_MOTHER = os.path.join('E:\\', '壓縮後VD_按日產生', 'VD_' + str(MINUTE_TYPE) + '分鐘資料')
+PATH_MOTHER = os.path.join('E:\\')
 
-## Export files ny MONTH or Day
+## Export files by MONTH or Day
 EXPOR_UNIT_DICT = {0: 'Month', 1: 'Day'}
 
 
-#創每月或每日資料夾
+#Create dictionaries by Month or by Data
 def create_dict(exportUnitNum: int, firstDate, lastDate):
 
     os.makedirs(PATH_MOTHER, exist_ok=True)
@@ -61,8 +61,6 @@ def create_header(exportUnitNum: int) -> list:
     return header
 
 
-
-
 def calculate_running_time(startTime: float):
     end = time.time()
     total_time = end - startTime
@@ -89,6 +87,26 @@ if __name__ == "__main__":
             except KeyError:
                 print(f"The value {exportUnit} is not listed.")
 
+        
+        finalPath = os.path.join(f"壓縮後VD_按{EXPOR_UNIT_DICT[exportUnit]}產生", 'VD_' + str(MINUTE_TYPE) + '分鐘資料')
+        global PATH_MOTHER
+        PATH_MOTHER = os.path.join(PATH_MOTHER, finalPath)
+
+        while True:
+            try:
+                global FIRST_DATE, LAST_DATE
+                input_firstDate = input("請輸入資料下載的起始日期: yyyy-mm-dd\n")
+                input_lastDate = input("請輸入資料下載的終止日期: yyyy-mm-dd\n")
+                datetime.datetime.strptime(input_firstDate, '%Y-%m-%d')
+                datetime.datetime.strptime(input_lastDate, '%Y-%m-%d')
+                
+                FIRST_DATE = input_firstDate
+                LAST_DATE = input_lastDate
+                break
+
+            except ValueError:
+                print("請輸入正確日期格式 yyyy-mm-dd !!")
+
         return exportUnit
 
     #Start
@@ -109,6 +127,7 @@ if __name__ == "__main__":
 
     #每月的迴圈尋找
     while firstDate < lastDate:
+
         # define day
         day = firstDate.day
         
@@ -116,7 +135,7 @@ if __name__ == "__main__":
         startDay = firstDate
         if EXPOR_UNIT_DICT[exportUnitNum] == 'Month':
             endDay = firstDate + dateutil.relativedelta.relativedelta(months=1) 
-            path_write_file = os.path.join(PATH_MOTHER, str(firstDate.year)+'年', str(firstDate.month)+'月.csv') #20230612
+            path_write_file = os.path.join(PATH_MOTHER, str(firstDate.year)+'年', str(firstDate.month)+'月.csv') 
         elif EXPOR_UNIT_DICT[exportUnitNum] == 'Day':
             endDay = firstDate + dateutil.relativedelta.relativedelta(days=1)
             path_write_file = os.path.join(PATH_MOTHER, str(firstDate.year)+'年', 
@@ -142,7 +161,7 @@ if __name__ == "__main__":
             date=datetime.datetime.strftime(startDay,'%Y-%m-%d')
 
             #讀取每日資料
-            with open(PATH_READ_file, 'r', newline='', encoding='Big5') as csv_file:
+            with open(PATH_READ_file, 'r', newline='', encoding='utf-8') as csv_file:
                 #header略過
                 line=csv_file.readline()
                 #檢查是否至少有三筆資料
@@ -223,7 +242,7 @@ if __name__ == "__main__":
         write_file.close()
 
         if EXPOR_UNIT_DICT[exportUnitNum] == 'Month':
-            firstDate = firstDate + dateutil.relativedelta.relativedelta(months=1) #20230612
+            firstDate = firstDate + dateutil.relativedelta.relativedelta(months=1) 
         elif EXPOR_UNIT_DICT[exportUnitNum] == 'Day':
             firstDate = firstDate + dateutil.relativedelta.relativedelta(days=1)
 
