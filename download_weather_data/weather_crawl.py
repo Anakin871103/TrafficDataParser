@@ -12,18 +12,16 @@ import time
 from bs4 import BeautifulSoup
 import configparser
 
-COLS = ['測站時間', '測站氣壓', '海平面氣壓', '氣溫', '露點溫度', '相對溼度',
-        '風速', '風向', '最大陣風', '最大陣風風向', '降水量', '降水時數', '日照時數',
-        '全天空日射量', '能見度', '紫外線指數', '總雲量']
-
 WEATHER_STATION_FILE_PATH = ''
 WEATHER_STATION_FILE_NAME = '測站網址(1).csv'
 DOWNLOAD_PATH = 'E:/Central Weather Bureau/'
 CONFIG_FILE_PATH = './config1.ini'
- #指定從第幾個測站開始下載(依照csv編號)
 FIRST_DATE = '2022-01-01'
 LAST_DATE = '2022-12-31'
-CURRENT_PROCESS_ROW = 0
+
+COLS = ['測站時間', '測站氣壓', '海平面氣壓', '氣溫', '露點溫度', '相對溼度',
+        '風速', '風向', '最大陣風', '最大陣風風向', '降水量', '降水時數', '日照時數',
+        '全天空日射量', '能見度', '紫外線指數', '總雲量']
 
 def read_config_file():
     config = configparser.ConfigParser()
@@ -105,15 +103,7 @@ def get_weather_data(url1, url2, date):
     url = f'{url1}{year}-{month}-{day}{url2}'
     html = request.get(url)
     try:
-        # for test
-        # import random
-        # a = random.randint(1, 100)
-        # if a == 2:
-        #     print("bingo!")
-        #     print("a = ", a)
-        #     print(1/0)
-        #for test
-
+    
         #嘗試進行網頁爬蟲連線
         if check_html_status(html.status_code):
             # print(f"已成功讀取網址{url}")
@@ -200,7 +190,7 @@ if __name__ == "__main__":
         exportFileName = stationName + "_" + stationAddress +'.csv'
         #export csv file
         writeToCSVfile(stationCode=stationCode, exportFileName=exportFileName, mode='w', encoding='utf-8-sig')
-        CURRENT_PROCESS_ROW = stationCode #更新已經目前測站下載進度
+        # CURRENT_PROCESS_ROW = stationCode #更新已經目前測站下載進度
         os.chdir('../') #資料夾跳回上層
 
 
