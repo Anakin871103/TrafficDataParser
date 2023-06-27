@@ -35,8 +35,6 @@ def read_config_file():
 def write_config_file():
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE_PATH)
-    # Adding or updating values in the configuration file # str(CURRENT_PROCESS_ROW)
-    config.set('setting', 'DOWNLOAD_START_FROM_ROW_NUM', CURRENT_PROCESS_ROW)
 
     # Writing changes to the configuration file
     with open(CONFIG_FILE_PATH, 'w') as f:

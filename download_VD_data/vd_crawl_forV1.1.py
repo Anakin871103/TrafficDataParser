@@ -18,29 +18,22 @@ import shutil
 import logging
 
 
-#起始日和最終日(總抓取天數為最終日-起始日+1)
-FIRST_DATE = ''
-LAST_DATE = ''
-
 # 儲存VD資料的位置
 PATH_DATABASE = {1: 'E:/VD_1分鐘資料', 5: 'E:/VD_5分鐘資料'}
 
 # VD檔案名稱(prefix)
 #for v1.1 -> 1: 'vd_value_', 5: 'vd_value5_'
-#for v2.0 -> 1: 'VDLive_', 5: 'VDLive_'
 VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
-
-#雲端資料庫網址 (1.1版) -> 'https://tisvcloud.freeway.gov.tw/history/_vd/'
-#雲端資料庫網址 (2.0版) -> 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
 
 VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
 
-## https://tisvcloud.freeway.gov.tw/history/motc20/VD/20230410/VD_0000.xml.gz
+VD_DATA_COLNAME = ['version', 'listname', 'updatetime', 'interval', 'vdid', 
+                   'status', 'datacollecttime', 'vsrdir', 'vsrid', 'speed', 
+                   'laneoccupy', 'carid', 'volume']
 
-#國道VD里程範圍抓取
-## 北分範圍: {'N1': 100.9, 'N3': 110.8}
-
+#國道VD里程範圍限制('國道名稱'只抓取至'指定里程')
 VD_MILE_CHECK = {'N1': 100.9, 'N3': 110.8}
+#不需檢查的國道清單
 VD_MILE_DONT_CHECK = ['N1H', 'N3A', 'N3N', 'N3K', '5N', '5S', 'N5']
 
 def create_dict_forMonth(path, first_day: datetime.datetime,
@@ -78,9 +71,7 @@ def decompress(path_save_compress,download_first):
 
 # 下載資料
 def download_vd_data(path1, path2, start_day):
-    VD_DATA_COLNAME = ['version', 'listname', 'updatetime', 'interval', 'vdid', 'status', 'datacollecttime', 'vsrdir', 'vsrid',
-         'speed', 'laneoccupy', 'carid', 'volume']
-
+    
     url = VD_FILE_URL
     year = str(start_day.year) + '年'
     month = str(start_day.month) + '月'
@@ -221,7 +212,7 @@ def download_vd_data(path1, path2, start_day):
 
     write_file.close()
 
-# 下載靜態VD資料 (still working)
+# 下載靜態VD資料 (to be continued)
 def download_static_vd():
     return 0
 

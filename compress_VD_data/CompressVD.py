@@ -23,28 +23,30 @@ MINUTE_TYPE = 5
 FIRST_DATE = ''
 LAST_DATE = ''
 
+#INPUT 
 PATH_READ = 'E://VD_5分鐘資料/'
-PATH_MOTHER = os.path.join('E:\\')
 
-## Export files by MONTH or Day
+#EXPORT 
+EXPORT_MOTHER_PATH= os.path.join('E:\\')
+## Export files by MONTH or Day 壓縮後以月或以日為單位輸出
 EXPOR_UNIT_DICT = {0: 'Month', 1: 'Day'}
 
 
 #Create dictionaries by Month or by Data
 def create_dict(exportUnitNum: int, firstDate, lastDate):
 
-    os.makedirs(PATH_MOTHER, exist_ok=True)
+    os.makedirs(EXPORT_MOTHER_PATH, exist_ok=True)
 
     while firstDate < lastDate:
 
         year = str(firstDate.year) + '年'
-        path_year=os.path.join(PATH_MOTHER,year)
+        path_year=os.path.join(EXPORT_MOTHER_PATH,year)
         if not os.path.isdir(path_year):
             os.mkdir(path_year)
         
         if EXPOR_UNIT_DICT[exportUnitNum] == 'Day':
             month = str(firstDate.month) + '月'
-            path_month = os.path.join(PATH_MOTHER, year, month)
+            path_month = os.path.join(EXPORT_MOTHER_PATH, year, month)
             os.makedirs(path_month, exist_ok=True)
 
         firstDate = firstDate + dateutil.relativedelta.relativedelta(months=1)
@@ -75,7 +77,6 @@ def calculate_running_time(startTime: float):
 
 if __name__ == "__main__":
 
-
     def start():
         while True:
             try:
@@ -88,15 +89,15 @@ if __name__ == "__main__":
                 print(f"The value {exportUnit} is not listed.")
 
         
-        finalPath = os.path.join(f"壓縮後VD_按{EXPOR_UNIT_DICT[exportUnit]}產生", 'VD_' + str(MINUTE_TYPE) + '分鐘資料')
-        global PATH_MOTHER
-        PATH_MOTHER = os.path.join(PATH_MOTHER, finalPath)
+        exportSubPath = os.path.join(f"壓縮後VD_按{EXPOR_UNIT_DICT[exportUnit]}產生", 'VD_' + str(MINUTE_TYPE) + '分鐘資料')
+        global EXPORT_MOTHER_PATH
+        EXPORT_MOTHER_PATH = os.path.join(EXPORT_MOTHER_PATH, exportSubPath)
 
         while True:
             try:
                 global FIRST_DATE, LAST_DATE
-                input_firstDate = input("請輸入資料下載的起始日期: yyyy-mm-dd\n")
-                input_lastDate = input("請輸入資料下載的終止日期: yyyy-mm-dd\n")
+                input_firstDate = input("請輸入資料壓縮的起始日期: yyyy-mm-dd\n")
+                input_lastDate = input("請輸入資料壓縮的終止日期: yyyy-mm-dd\n")
                 datetime.datetime.strptime(input_firstDate, '%Y-%m-%d')
                 datetime.datetime.strptime(input_lastDate, '%Y-%m-%d')
                 
@@ -135,10 +136,10 @@ if __name__ == "__main__":
         startDay = firstDate
         if EXPOR_UNIT_DICT[exportUnitNum] == 'Month':
             endDay = firstDate + dateutil.relativedelta.relativedelta(months=1) 
-            path_write_file = os.path.join(PATH_MOTHER, str(firstDate.year)+'年', str(firstDate.month)+'月.csv') 
+            path_write_file = os.path.join(EXPORT_MOTHER_PATH, str(firstDate.year)+'年', str(firstDate.month)+'月.csv') 
         elif EXPOR_UNIT_DICT[exportUnitNum] == 'Day':
             endDay = firstDate + dateutil.relativedelta.relativedelta(days=1)
-            path_write_file = os.path.join(PATH_MOTHER, str(firstDate.year)+'年', 
+            path_write_file = os.path.join(EXPORT_MOTHER_PATH, str(firstDate.year)+'年', 
                                        str(firstDate.month)+'月', str(firstDate.day) + '日.csv')
         else: raise Exception("Exception")
 

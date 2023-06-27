@@ -11,9 +11,9 @@ import datetime
 import pandas as pd
 import winsound
 import configparser
+
 SOUND_FREQ = 2500  # Set Frequency To 2500 Hertz
 SOUND_DURATION = 1000  # Set Duration To 1000 ms == 1 second
-
 
 COLUMN_NAMES = {'M03A': ['TimeInterval', 'GantryID', 'Direction', 'VehicleType', 'Volume'],
                'M05A': ['TimeInterval', 'GantryFrom', 'GantryTo', 'VehicleType', 'SpaceMeanSpeed', 'Volume'],
