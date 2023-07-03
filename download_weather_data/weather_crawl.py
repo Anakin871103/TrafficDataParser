@@ -17,7 +17,7 @@ WEATHER_STATION_FILE_NAME = '測站網址(1).csv'
 DOWNLOAD_PATH = 'E:/Central Weather Bureau/'
 CONFIG_FILE_PATH = './config1.ini'
 FIRST_DATE = '2022-01-01'
-LAST_DATE = '2022-12-31'
+LAST_DATE = '2022-02-01'
 
 COLS = ['測站時間', '測站氣壓', '海平面氣壓', '氣溫', '露點溫度', '相對溼度',
         '風速', '風向', '最大陣風', '最大陣風風向', '降水量', '降水時數', '日照時數',
