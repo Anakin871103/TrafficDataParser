@@ -3,19 +3,20 @@
 Created on Tue Jan  3 10:01:03 2023
 @author: user
 """
-# from selenium import webdriver
 import requests as request 
 import os 
 import csv
+import pandas as pd
 import datetime
-import time
 from bs4 import BeautifulSoup
 import configparser
 
-WEATHER_STATION_FILE_PATH = ''
+BASE_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+
+WEATHER_STATION_FILE_PATH = os.path.join(BASE_DIRECTORY)
 WEATHER_STATION_FILE_NAME = '測站網址(1).csv'
 DOWNLOAD_PATH = 'E:/Central Weather Bureau/'
-CONFIG_FILE_PATH = './config1.ini'
+CONFIG_FILE_PATH = os.path.join(BASE_DIRECTORY, 'config1.ini')
 FIRST_DATE = '2022-01-01'
 LAST_DATE = '2022-02-01'
 
@@ -24,12 +25,11 @@ COLS = ['測站時間', '測站氣壓', '海平面氣壓', '氣溫', '露點溫�
         '全天空日射量', '能見度', '紫外線指數', '總雲量']
 
 def read_config_file():
+    # Read config files and get values from the configuration file
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE_PATH)
-    # Accessing values from the configuration file
     startRow = config.get('setting', 'DOWNLOAD_START_FROM_ROW_NUM')
     endRow = config.get('setting', 'DOWNLOAD_END_AT_ROW_NUM')
-
     return startRow, endRow
 
 def write_config_file():
@@ -43,19 +43,17 @@ def write_config_file():
 
 def choose_download_rows(startRow: int, endRow: int):
 
-    stations = []
-    countyNameList = []
-
+    stations, countyNameList = [], []
     path = os.path.join(WEATHER_STATION_FILE_PATH, WEATHER_STATION_FILE_NAME)
+
     # 讀取全台灣所有氣象測站網址
     with open(path, newline='', encoding='utf-8') as csvfile:
-         # 跳到指定的ROW: 選擇從哪一個測站開始下載
+        # 跳到指定的ROW: 選擇從哪一個測站開始下載
         rows = csv.reader(csvfile, skipinitialspace=True)
         rows = list(rows) #轉換為list
-        # 跳到指定的ROW
-        # for i in range(1):
-        #     next(rows)
+       
         for row in rows[startRow:endRow+1]:
+            #存取指定列的測站資料
             stationCode, countyName, stationName, address, url1, url2 = row[0], row[1], row[2], row[7], row[8], row[9]
             stations.append([stationCode, countyName, stationName, address, url1, url2])
             countyNameList.append(countyName)
@@ -66,7 +64,7 @@ def change_directory(directoryName: str):
     try:
         os.chdir(directoryName)
     except FileNotFoundError as e:
-        print("The system cannot find the path specified!!!")
+        print("[Error]System cannot find the specific path!!!")
         raise e
 
 def check_html_status(code: int):
@@ -76,18 +74,40 @@ def check_html_status(code: int):
         return False
 
 
-def writeToCSVfile(stationCode: str, exportFileName: str, mode: str, encoding: str):
-    try:
-        with open(exportFileName, mode, newline='', encoding=encoding) as f:
-            writer = csv.writer(f)
-            writer.writerow(COLS)
-            for i in totalData:
-                writer.writerow(i)
-            print(f'測站代號: {stationCode} - 站名: {exportFileName}  is done!')
+def modfify_rows(data: pd.DataFrame, colNames: list) -> pd.DataFrame:
 
-    except PermissionError as e:
-        print("permission error!")
-        raise e
+    newDataDict = {colName:[] for colName in colNames}
+
+    for row in data.iterrows():
+        for value in row[1]:
+            #valueInList = eval(value)
+            valueInList = list(value)
+            i = 0
+            for key in newDataDict.keys():
+                newDataDict[key].append(valueInList[i])
+                i = i + 1
+
+    newDataFrame = pd.DataFrame(newDataDict)
+    print("Done!")
+    return newDataFrame
+
+def write_to_CSVfile(data: pd.DataFrame, stationCode: str, exportFileName: str, mode: str, encoding: str):
+    
+    
+    data.to_csv(exportFileName, index=False, encoding=encoding)
+    print(f'測站代號: {stationCode} - 站名: {exportFileName}  is done!')
+
+    # try:
+    #     with open(exportFileName, mode, newline='', encoding=encoding) as f:
+    #         writer = csv.writer(f)
+    #         writer.writerow(COLS)
+    #         for i in data:
+    #             writer.writerow(i)
+    #         
+
+    # except PermissionError as e:
+    #     print("permission error!")
+    #     raise e
 
     return 0
 
@@ -186,8 +206,15 @@ if __name__ == "__main__":
 
         #export file name
         exportFileName = stationName + "_" + stationAddress +'.csv'
+
+        #modfify rows to a right form
+        dataAfterModified = modfify_rows(data=pd.DataFrame(totalData), colNames=COLS)
+
         #export csv file
-        writeToCSVfile(stationCode=stationCode, exportFileName=exportFileName, mode='w', encoding='utf-8-sig')
+        write_to_CSVfile(data=dataAfterModified, 
+                         stationCode=stationCode, 
+                         exportFileName=exportFileName, 
+                         mode='w', encoding='utf-8-sig')
         # CURRENT_PROCESS_ROW = stationCode #更新已經目前測站下載進度
         os.chdir('../') #資料夾跳回上層
 
