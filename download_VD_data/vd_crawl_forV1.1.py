@@ -26,6 +26,7 @@ PATH_DATABASE = {1: 'E:/VD_1分鐘資料', 5: 'E:/VD_5分鐘資料'}
 VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
 
 VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
+VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
 
 VD_DATA_COLNAME = ['version', 'listname', 'updatetime', 'interval', 'vdid', 
                    'status', 'datacollecttime', 'vsrdir', 'vsrid', 'speed', 
