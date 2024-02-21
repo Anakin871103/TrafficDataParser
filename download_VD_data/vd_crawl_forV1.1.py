@@ -25,8 +25,8 @@ PATH_DATABASE = {1: 'D:/TrafficData/VD/1Min', 5: 'D:/TrafficData/VD/5Min'}
 #for v1.1 -> 1: 'vd_value_', 5: 'vd_value5_'
 VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
 
-VD_FILE_URL_old = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
-VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
+VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
+VD_FILE_URL_NEW = 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
 
 VD_DATA_COLNAME = ['version', 'listname', 'updatetime', 'interval', 'vdid', 
                    'status', 'datacollecttime', 'vsrdir', 'vsrid', 'speed', 
@@ -35,7 +35,7 @@ VD_DATA_COLNAME = ['version', 'listname', 'updatetime', 'interval', 'vdid',
 #國道VD里程範圍限制('國道名稱'只抓取至'指定里程')
 VD_MILE_CHECK = {'N1': 100.9, 'N3': 110.8}
 #不需檢查的國道清單
-VD_MILE_DONT_CHECK = ['N1H', 'N3A', 'N3N', 'N3K', '5N', '5S', 'N5']
+VD_MILE_DONT_CHECK = ['N1H', 'N2', 'N3A', 'N3N', 'N3K', '5N', '5S', 'N5']
 
 def create_dict_forMonth(path, first_day: datetime.datetime,
                 last_day: datetime.datetime):
