@@ -19,13 +19,13 @@ import logging
 
 
 # 儲存VD資料的位置
-PATH_DATABASE = {1: 'E:/VD_1分鐘資料', 5: 'E:/VD_5分鐘資料'}
+PATH_DATABASE = {1: 'D:/TrafficData/VD/1Min', 5: 'D:/TrafficData/VD/5Min'}
 
 # VD檔案名稱(prefix)
 #for v1.1 -> 1: 'vd_value_', 5: 'vd_value5_'
 VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
 
-VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
+VD_FILE_URL_old = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
 VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
 
 VD_DATA_COLNAME = ['version', 'listname', 'updatetime', 'interval', 'vdid', 
