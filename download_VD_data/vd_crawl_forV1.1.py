@@ -25,8 +25,9 @@ PATH_DATABASE = {1: 'D:/TrafficData/VD/1Min', 5: 'D:/TrafficData/VD/5Min'}
 #for v1.1 -> 1: 'vd_value_', 5: 'vd_value5_'
 VD_FILENAME_PREFIX = {1: 'vd_value_', 5: 'vd_value5_'}
 
-VD_FILE_URL = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
-VD_FILE_URL_NEW = 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
+VD_FILE_URL_V1 = 'https://tisvcloud.freeway.gov.tw/history/_vd/'
+VD_FILE_URL_V2 = 'https://tisvcloud.freeway.gov.tw/history/motc20/VD/'
+VD_FILE_URL = VD_FILE_URL_V1
 
 VD_DATA_COLNAME = ['version', 'listname', 'updatetime', 'interval', 'vdid', 
                    'status', 'datacollecttime', 'vsrdir', 'vsrid', 'speed', 
